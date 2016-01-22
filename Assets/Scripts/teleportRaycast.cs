@@ -6,6 +6,7 @@ public class teleportRaycast : MonoBehaviour {
     public float charRadius = 0.75f;
     public GameObject teleportReticle;
     public GameObject teleportReticleRed;
+    public GameObject rightArm;
     public float teleportMaxDist = 6f;
     public GameObject PlayerGO;
     public Vector3 resetPosition = new Vector3(50, 50, 50);
@@ -39,7 +40,7 @@ public class teleportRaycast : MonoBehaviour {
         RaycastHit hit;
 
         // if raycast hit, position reticle at raycast
-        if (Physics.Raycast(Camera.main.transform.position, fwd, out hit, teleportMaxDist))
+        if (Physics.Raycast(rightArm.transform.position, fwd, out hit, teleportMaxDist))
         {
             Vector3 dir = hit.normal;
             teleportReticle.transform.position = hit.point + (dir * charRadius);
@@ -50,7 +51,7 @@ public class teleportRaycast : MonoBehaviour {
             // if not, position reticle at teleportMaxDist away
            // Vector3 dir = (Camera.main.transform.position - fwd).normalized;
            // print(dir);
-            teleportReticleRed.transform.position = Camera.main.transform.position + (fwd.normalized * teleportMaxDist);
+            teleportReticleRed.transform.position = rightArm.transform.position + (fwd.normalized * teleportMaxDist);
             teleportReticle.transform.position = resetPosition;
             canTeleport = false;
         }
