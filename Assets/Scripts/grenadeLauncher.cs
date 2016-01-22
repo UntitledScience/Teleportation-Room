@@ -75,8 +75,8 @@ public class grenadeLauncher : MonoBehaviour {
     void SpawnGrenade()
     {
         // GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, Quaternion.identity);
-        tempGrenade.GetComponent<Rigidbody>().isKinematic = false;
         tempGrenade.transform.parent = null;
+        tempGrenade.GetComponent<Rigidbody>().isKinematic = false;  
         throwForce = (thisCamera.transform.forward) * curForce;
         tempGrenade.GetComponent<Rigidbody>().AddForce(throwForce);
         curForce = originalForce; // reset curForce
