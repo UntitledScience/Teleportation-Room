@@ -36,12 +36,13 @@ public class teleportRaycast : MonoBehaviour {
 
     void PositionReticle()
     {
-        Vector3 fwd = Camera.main.transform.TransformDirection(transform.forward);
+		// Vector3 fwd = Camera.main.transform.TransformDirection(transform.forward);
         RaycastHit hit;
 
         // if raycast hit, position reticle at raycast
-        if (Physics.Raycast(rightArm.transform.position, fwd, out hit, teleportMaxDist))
+		if (Physics.Raycast(rightArm.transform.position, Camera.main.transform.forward, out hit, teleportMaxDist))
         {
+			Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red);
             Vector3 dir = hit.normal;
             teleportReticle.transform.position = hit.point + (dir * charRadius);
             teleportReticleRed.transform.position = resetPosition;
@@ -51,7 +52,7 @@ public class teleportRaycast : MonoBehaviour {
             // if not, position reticle at teleportMaxDist away
            // Vector3 dir = (Camera.main.transform.position - fwd).normalized;
            // print(dir);
-            teleportReticleRed.transform.position = rightArm.transform.position + (fwd.normalized * teleportMaxDist);
+			teleportReticleRed.transform.position = rightArm.transform.position + (Camera.main.transform.forward.normalized * teleportMaxDist);
             teleportReticle.transform.position = resetPosition;
             canTeleport = false;
         }
