@@ -11,6 +11,7 @@ public class teleportRaycast : MonoBehaviour {
     public Vector3 resetPosition = new Vector3(50, 50, 50);
 
     private bool canTeleport = false;
+    private bool teleporting = false;
     private GameObject tpRecGreen;
     private GameObject tpRecRed;
 
@@ -44,8 +45,28 @@ public class teleportRaycast : MonoBehaviour {
         {
             TeleportToPoint();
         }
-	
-	}
+
+        if (Input.GetAxis("Mouse X") > 0.3)
+        {
+            if (!teleporting)
+            {
+                PositionReticle();
+                teleporting = true;
+            }
+
+        }
+  
+        if (Input.GetAxis("Mouse X") == 0)
+        {
+            if (teleporting)
+            {
+                TeleportToPoint();
+                teleporting = false;
+            }
+        }
+
+
+    }
 
     void PositionReticle()
     {

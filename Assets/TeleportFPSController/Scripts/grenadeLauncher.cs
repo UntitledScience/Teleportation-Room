@@ -37,7 +37,7 @@ public class grenadeLauncher : MonoBehaviour {
             ThrowGrenade();
         }
 
-        if (Input.GetAxis("Mouse X") < 0)
+        if (Input.GetAxis("Mouse X") < -0.3)
         {
             if (!swiping)
             {
