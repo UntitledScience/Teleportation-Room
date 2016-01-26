@@ -35,18 +35,18 @@ public class teleportRaycast : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        // position teleportReticle where you desire to be teleported
-        if (Input.GetButton("Fire1"))
-        {
-            PositionReticle();
-        }
+        //// position teleportReticle where you desire to be teleported
+        //if (Input.GetButton("Fire1"))
+        //{
+        //    PositionReticle();
+        //}
 
-        if (Input.GetButtonUp("Fire1"))
-        {
-            TeleportToPoint();
-        }
+        //if (Input.GetButtonUp("Fire1"))
+        //{
+        //    TeleportToPoint();
+        //}
 
-        if (Input.GetAxis("Mouse X") > 0.3)
+        if (Input.GetAxis("Mouse X") < -1.5 && Input.GetButtonDown("Fire1"))
         {
             if (!teleporting)
             {
@@ -56,7 +56,7 @@ public class teleportRaycast : MonoBehaviour {
 
         }
   
-        if (Input.GetAxis("Mouse X") == 0)
+        if (Input.GetButtonUp("Fire1"))
         {
             if (teleporting)
             {

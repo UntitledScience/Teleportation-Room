@@ -6,6 +6,7 @@ public class grenadeLauncher : MonoBehaviour {
     public GameObject grenade;
     public GameObject throwArm;
     public GameObject throwArmMax;
+    public GameObject aimTarget;
     public Camera thisCamera;
 
     public float maxForce = 1f;
@@ -37,17 +38,18 @@ public class grenadeLauncher : MonoBehaviour {
             ThrowGrenade();
         }
 
-        if (Input.GetAxis("Mouse X") < -0.3)
+        if (Input.GetAxis("Mouse X") > 1.5 && Input.GetButtonDown("Fire1"))
         {
             if (!swiping)
             {
                 PreppingThrow();
                 swiping = true;
+                print(Input.GetAxis("Mouse X"));
             }
             
         }
 
-        if (Input.GetAxis("Mouse X") == 0)
+        if (Input.GetButtonUp("Fire1"))
         {
             if (swiping)
             {
@@ -72,7 +74,6 @@ public class grenadeLauncher : MonoBehaviour {
     void ThrowGrenade()
     {
         // Throwing the Grenade
-        preppingThrow = false;
         SpawnGrenade();
     }
 
@@ -107,10 +108,15 @@ public class grenadeLauncher : MonoBehaviour {
     void SpawnGrenade()
     {
         // GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, Quaternion.identity);
-        tempGrenade.transform.parent = null;
-        tempGrenade.GetComponent<Rigidbody>().isKinematic = false;  
-        throwForce = (thisCamera.transform.forward) * curForce;
+
+        // get forward vector
+        tempGrenade.GetComponent<Rigidbody>().isKinematic = false;
+        // Vector3 fwd = Vector3.Normalize(aimTarget.transform.position - throwArm.transform.position);
+        throwForce = Camera.main.transform.forward * curForce;
         tempGrenade.GetComponent<Rigidbody>().AddForce(throwForce);
+        tempGrenade.transform.parent = null;
         curForce = originalForce; // reset curForce
+        preppingThrow = false;
+
     }
 }
