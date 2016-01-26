@@ -15,6 +15,7 @@ public class grenadeLauncher : MonoBehaviour {
     private float curForce = 1f;
     private Vector3 throwForce;
     private bool preppingThrow = false;
+    private bool swiping = false;
 
     private GameObject tempGrenade;
 
@@ -24,25 +25,56 @@ public class grenadeLauncher : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 	
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire2"))
         {
-            preppingThrow = true;
-            GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, Quaternion.identity);
-            tempGrenade = newGrenade;
-            tempGrenade.GetComponent<Rigidbody>().isKinematic = true;
-            tempGrenade.transform.parent = thisCamera.transform;
-            StartCoroutine(PrepGrenade());
+            PreppingThrow();
         }
 
-        if (Input.GetButtonUp("Fire1"))
+        if (Input.GetButtonUp("Fire2"))
         {
-            preppingThrow = false;
-          SpawnGrenade();
+            ThrowGrenade();
+        }
+
+        if (Input.GetAxis("Mouse X") < 0)
+        {
+            if (!swiping)
+            {
+                PreppingThrow();
+                swiping = true;
+            }
+            
+        }
+
+        if (Input.GetAxis("Mouse X") == 0)
+        {
+            if (swiping)
+            {
+                ThrowGrenade();
+                swiping = false;
+            }
         }
 
 	}
+
+    void PreppingThrow()
+    {
+        // Input method to prep throwing of grenade
+        preppingThrow = true;
+        GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, Quaternion.identity);
+        tempGrenade = newGrenade;
+        tempGrenade.GetComponent<Rigidbody>().isKinematic = true;
+        tempGrenade.transform.parent = thisCamera.transform;
+        StartCoroutine(PrepGrenade());
+    }
+
+    void ThrowGrenade()
+    {
+        // Throwing the Grenade
+        preppingThrow = false;
+        SpawnGrenade();
+    }
 
     IEnumerator PrepGrenade()
     {

@@ -35,12 +35,12 @@ public class teleportRaycast : MonoBehaviour {
 	void Update () {
 
         // position teleportReticle where you desire to be teleported
-        if (Input.GetButton("Fire2"))
+        if (Input.GetButton("Fire1"))
         {
             PositionReticle();
         }
 
-        if (Input.GetButtonUp("Fire2"))
+        if (Input.GetButtonUp("Fire1"))
         {
             TeleportToPoint();
         }
