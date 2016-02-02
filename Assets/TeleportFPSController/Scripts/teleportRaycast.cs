@@ -11,6 +11,7 @@ public class teleportRaycast : MonoBehaviour {
     public Vector3 resetPosition = new Vector3(50, 50, 50);
 
     private bool canTeleport = false;
+    private bool teleporting = false;
     private GameObject tpRecGreen;
     private GameObject tpRecRed;
 
@@ -34,18 +35,38 @@ public class teleportRaycast : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        // position teleportReticle where you desire to be teleported
-        if (Input.GetButton("Fire2"))
+        //// position teleportReticle where you desire to be teleported
+        //if (Input.GetButton("Fire1"))
+        //{
+        //    PositionReticle();
+        //}
+
+        //if (Input.GetButtonUp("Fire1"))
+        //{
+        //    TeleportToPoint();
+        //}
+
+        if (Input.GetAxis("Mouse X") < -1.5 && Input.GetButtonDown("Fire1"))
         {
-            PositionReticle();
+            if (!teleporting)
+            {
+                PositionReticle();
+                teleporting = true;
+            }
+
+        }
+  
+        if (Input.GetButtonUp("Fire1"))
+        {
+            if (teleporting)
+            {
+                TeleportToPoint();
+                teleporting = false;
+            }
         }
 
-        if (Input.GetButtonUp("Fire2"))
-        {
-            TeleportToPoint();
-        }
-	
-	}
+
+    }
 
     void PositionReticle()
     {
