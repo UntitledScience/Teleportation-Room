@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class grenadeLauncher : MonoBehaviour {
+public class grenadeLauncher : MonoBehaviour
+{
 
     public GameObject grenade;
     public GameObject throwArm;
     public GameObject throwArmMax;
-    public GameObject aimTarget;
-    public Camera thisCamera;
 
     public float maxForce = 1f;
     public float rateForce = 1.3f;
@@ -16,65 +15,51 @@ public class grenadeLauncher : MonoBehaviour {
     private float curForce = 1f;
     private Vector3 throwForce;
     private bool preppingThrow = false;
-    private bool swiping = false;
 
     private GameObject tempGrenade;
+    private Vector3 tempForce;
+    private bool fire1ButtonUpChange = false;
 
-	// Use this for initialization
-	void Start () {
-        curForce = originalForce;
-	}
-	
-	// Update is called once per frame
-	void LateUpdate () {
-	
-        if (Input.GetButtonDown("Fire2"))
-        {
-            PreppingThrow();
-        }
-
-        if (Input.GetButtonUp("Fire2"))
-        {
-            ThrowGrenade();
-        }
-
-        if (Input.GetAxis("Mouse X") > 1.5 && Input.GetButtonDown("Fire1"))
-        {
-            if (!swiping)
-            {
-                PreppingThrow();
-                swiping = true;
-                print(Input.GetAxis("Mouse X"));
-            }
-            
-        }
-
-        if (Input.GetButtonUp("Fire1"))
-        {
-            if (swiping)
-            {
-                ThrowGrenade();
-                swiping = false;
-            }
-        }
-
-	}
-
-    void PreppingThrow()
+    // Use this for initialization
+    void Start()
     {
-        // Input method to prep throwing of grenade
-        preppingThrow = true;
-        GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, Quaternion.identity);
-        tempGrenade = newGrenade;
-        tempGrenade.GetComponent<Rigidbody>().isKinematic = true;
-        tempGrenade.transform.parent = thisCamera.transform;
-        StartCoroutine(PrepGrenade());
+        curForce = originalForce;
     }
 
-    void ThrowGrenade()
+    // Update is called once per frame
+    void OnPreCull()
     {
-        // Throwing the Grenade
-        SpawnGrenade();
+
+        if (Input.GetButton("Fire1"))
+        { 
+            if (!preppingThrow)
+            {
+                preppingThrow = true;
+                GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, transform.rotation);
+                tempGrenade = newGrenade;
+                tempGrenade.GetComponent<Rigidbody>().isKinematic = true;
+                tempGrenade.transform.parent = Camera.main.transform;
+                StartCoroutine(PrepGrenade());
+            }
+
+        }
+
+        if (fire1ButtonUpChange)
+        {
+            StopAllCoroutines();
+            preppingThrow = false;
+            tempForce = Camera.main.transform.forward; // get camera.main.transform.forward at prerender time
+            SpawnGrenade();
+            fire1ButtonUpChange = false;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetButtonUp("Fire1"))
+        {
+            fire1ButtonUpChange = true; // flag to push GetButtonUp to prerender stage
+        }
     }
 
     IEnumerator PrepGrenade()
@@ -85,9 +70,10 @@ public class grenadeLauncher : MonoBehaviour {
             if (curForce < maxForce)
             {
                 curForce = curForce * rateForce;
-                SetPrepGrenadeTransform();
-               // print(curForce);
-            } else
+                PosGrenadeTransform();
+                // print(curForce);
+            }
+            else
             {
                 yield break;
             }
@@ -95,7 +81,7 @@ public class grenadeLauncher : MonoBehaviour {
         }
     }
 
-    void SetPrepGrenadeTransform()
+    void PosGrenadeTransform()
     {
         // Get distance between two Vectors (throwArm and throwArmMax)
         float percent = curForce / maxForce;
@@ -108,15 +94,14 @@ public class grenadeLauncher : MonoBehaviour {
     void SpawnGrenade()
     {
         // GameObject newGrenade = (GameObject)Instantiate(grenade, throwArm.transform.position, Quaternion.identity);
-
-        // get forward vector
+       
         tempGrenade.GetComponent<Rigidbody>().isKinematic = false;
-        // Vector3 fwd = Vector3.Normalize(aimTarget.transform.position - throwArm.transform.position);
-        throwForce = Camera.main.transform.forward * curForce;
+        throwForce = tempForce * curForce;
         tempGrenade.GetComponent<Rigidbody>().AddForce(throwForce);
         tempGrenade.transform.parent = null;
         curForce = originalForce; // reset curForce
-        preppingThrow = false;
-
     }
+
+    
 }
+
