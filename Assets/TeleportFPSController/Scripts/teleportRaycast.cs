@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class teleportRaycast : MonoBehaviour {
+public class teleportRaycast : MonoBehaviour
+{
 
     public float charRadius = 0.75f;
     public GameObject teleportReticle;
@@ -11,14 +12,13 @@ public class teleportRaycast : MonoBehaviour {
     public Vector3 resetPosition = new Vector3(50, 50, 50);
 
     private bool canTeleport = false;
-    private bool teleporting = false;
     private GameObject tpRecGreen;
     private GameObject tpRecRed;
 
-
-	// Use this for initialization
-	void Start () {
-	
+    // Use this for initialization
+    void Start()
+    {
+        // instantiate reticules if they don't exist
         if (GameObject.Find("teleportReticle") == null)
         {
             tpRecGreen = (GameObject)Instantiate(teleportReticle, resetPosition, Quaternion.identity);
@@ -30,65 +30,52 @@ public class teleportRaycast : MonoBehaviour {
             tpRecRed = (GameObject)Instantiate(teleportReticleRed, resetPosition, Quaternion.identity);
             MakeInvisible(tpRecRed);
         }
-	}
-	
-	// Update is called once per frame
-	void Update () {
 
-        //// position teleportReticle where you desire to be teleported
-        //if (Input.GetButton("Fire1"))
-        //{
-        //    PositionReticle();
-        //}
+    }
 
-        //if (Input.GetButtonUp("Fire1"))
-        //{
-        //    TeleportToPoint();
-        //}
+    // polling camera's transform just before render
+    void OnPreCull()
+    {
 
-        if (Input.GetAxis("Mouse X") < -1.5 && Input.GetButtonDown("Fire1"))
+        // position teleportReticle where you desire to be teleported
+        if (Input.GetButton("Fire2"))
         {
-            if (!teleporting)
-            {
-                PositionReticle();
-                teleporting = true;
-            }
-
-        }
-  
-        if (Input.GetButtonUp("Fire1"))
-        {
-            if (teleporting)
-            {
-                TeleportToPoint();
-                teleporting = false;
-            }
+            PositionReticle();
         }
 
+    }
 
+    void Update()
+    {
+
+        if (Input.GetButtonUp("Fire2"))
+        {
+            TeleportToPoint();
+        }
     }
 
     void PositionReticle()
     {
-		// Vector3 fwd = Camera.main.transform.TransformDirection(transform.forward);
+        // Vector3 fwd = Camera.main.transform.TransformDirection(transform.forward);
         RaycastHit hit;
 
         // if raycast hit, position reticle at raycast
-		if (Physics.Raycast(rightArm.transform.position, Camera.main.transform.forward, out hit, teleportMaxDist))
+        if (Physics.Raycast(rightArm.transform.position, Camera.main.transform.forward, out hit, teleportMaxDist))
         {
-			Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red);
+            Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red);
             Vector3 dir = hit.normal;
             MakeVisible(tpRecGreen);
             tpRecGreen.transform.position = hit.point + (dir * charRadius);
             MakeInvisible(tpRecRed);
             canTeleport = true;
 
-        } else {
+        }
+        else {
             // if not, position reticle at teleportMaxDist away
             // Vector3 dir = (Camera.main.transform.position - fwd).normalized;
             // print(dir);
             MakeVisible(tpRecRed);
-			tpRecRed.transform.position = rightArm.transform.position + (Camera.main.transform.forward.normalized * teleportMaxDist);
+            tpRecRed.transform.position = rightArm.transform.position + (Camera.main.transform.forward.normalized * teleportMaxDist);
             MakeInvisible(tpRecGreen);
             canTeleport = false;
         }
@@ -99,9 +86,12 @@ public class teleportRaycast : MonoBehaviour {
     {
         if (canTeleport)
         {
-            this.transform.position = tpRecGreen.transform.position;
+            print("teleporting to " + tpRecGreen.transform.position);
+            transform.parent.position = tpRecGreen.transform.position;
             MakeInvisible(tpRecGreen);
-        } else
+
+        }
+        else
         {
             MakeInvisible(tpRecGreen);
             MakeInvisible(tpRecRed);
@@ -114,7 +104,7 @@ public class teleportRaycast : MonoBehaviour {
         if (!GO.activeInHierarchy)
         {
             GO.SetActive(true);
-        }   
+        }
     }
 
     void MakeInvisible(GameObject GO)
@@ -125,5 +115,6 @@ public class teleportRaycast : MonoBehaviour {
         }
 
         GO.transform.position = resetPosition;
-    } 
+    }
 }
+
